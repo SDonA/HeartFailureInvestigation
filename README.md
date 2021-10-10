@@ -9,26 +9,36 @@ Test Change
 
 ## Installation <a name="installation"></a>
 
-There should be no necessary libraries to run the code here beyond the Anaconda distribution of Python.  The code should run with no issues using Python versions 3.*.
+There should be no necessary libraries to run the code here beyond the Anaconda distribution of Python.  The code should run with no issues using Python versions 3.*. on Anaconda (jupyter notebook)
+
+Required Libraries are:
+
+pandas
+numpy
+seaborn
+scipy
+sklearn
+time
+matplotlib
+
 
 ## Project Motivation<a name="motivation"></a>
 
-For this project, I was interestested in using Stack Overflow data from 2017 to better understand:
+Having experienced very close family members and friends suffer from cardiovascular related illnesses with occasional worrisome attacks, I was inspired to understand what is critical for patients who survived or died from heart attacks/failures. [Using In Hospital Mortality dataset from Kaggle](https://www.kaggle.com/saurabhshahane/in-hospital-mortality-prediction), I was particularly interested in 
 
-1. How other developers suggested breaking into the field (what education to pursue)?
-2. What factors about an individual contributed to salary?
-3. How bias played a role in the suggestions of developers for how to break into the field?
-4. What was the state of bootcamps for assisting individuals with breaking into developer roles?
-5. How were bootcamps assisting with increasing diversity in tech careers?
-
-The full set of files related to this course are owned by Udacity, so they are not publicly available here.  However, you can see pieces of the analysis here.  This README also serves as a template for students to follow in creating their own project README files.
-
+1. What are the top 3 prevalent comorbidities in HF patients and the risk level with age?
+2. What are the major inter-relationships between the vital signs related to HF?
+3. What are the major inter-relationships between the comorbidities related to HF?
+4. What are the top 5 predictive features of mortality in HF patients?
 
 ## File Descriptions <a name="files"></a>
 
-There are 3 notebooks available here to showcase work related to the above questions.  Each of the notebooks is exploratory in searching through the data pertaining to the questions showcased by the notebook title.  Markdown cells were used to assist in walking through the thought process for individual steps.  
+The files neccessary to run the code are are below
+1. HeartfaiureInvestigation.ipynb - Main jupyter notebook file
+2. data.csv - In Hospital Mortality Dataset from kaagle
+3. visuals.py - Utility python code with functions used in main notebook 
 
-There is an additional `.py` file that runs the necessary code to obtain the final model used to predict salary.
+The steps taking in analyzing the data is thoroughly stated in markdown cells in the main notebook.
 
 ## Results<a name="results"></a>
 
@@ -36,5 +46,6 @@ The main findings of the code can be found at the post available [here](https://
 
 ## Licensing, Authors, Acknowledgements<a name="licensing"></a>
 
-Must give credit to Stack Overflow for the data.  You can find the Licensing for the data and other descriptive information at the Kaggle link available [here](https://www.kaggle.com/stackoverflow/so-survey-2017/data).  Otherwise, feel free to use the code here as you would like! 
+Credits goes to Saurabh Shahane for the dataset provided on kaggle.
+You can find the Licensing for the data and other descriptive information at the Kaggle link available [here](https://www.kaggle.com/saurabhshahane/in-hospital-mortality-prediction).  Feel free to use the code here as you would like! 
 
