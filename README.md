@@ -34,7 +34,7 @@ Having experienced very close family members and friends suffer from cardiovascu
 ## File Descriptions <a name="files"></a>
 
 The files neccessary to run the code are are below
-1. HeartfaiureInvestigation.ipynb - Main jupyter notebook file
+1. HeartFailureInvestigation.ipynb - Main jupyter notebook file
 2. data.csv - In Hospital Mortality Dataset from kaagle
 3. visuals.py - Utility python code with functions used in main notebook 
 
