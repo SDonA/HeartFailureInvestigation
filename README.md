@@ -42,7 +42,7 @@ The steps taking in analyzing the data is thoroughly stated in markdown cells in
 
 ## Results<a name="results"></a>
 
-The main findings of the code can be found at the post available [here](https://medium.com/@josh_2774/how-do-you-become-a-developer-5ef1c1c68711).
+The main findings of the code can be found at the post available [here](https://medium.com/@succatt/key-parameters-impacting-mortality-in-heart-failure-hf-patients-a-data-driven-quest-2d9c273c46fc).
 
 ## Licensing, Authors, Acknowledgements<a name="licensing"></a>
 
