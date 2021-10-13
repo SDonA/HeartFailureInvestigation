@@ -9,12 +9,15 @@ from IPython import get_ipython
 get_ipython().run_line_magic('matplotlib', 'inline')
 ###########################################
 
-import matplotlib.pyplot as pl
+#import matplotlib.pyplot as pl
+import matplotlib.pyplot as plt
+import seaborn as sb
 import matplotlib.patches as mpatches
 import numpy as np
 import pandas as pd
 from time import time
 from sklearn.metrics import f1_score, accuracy_score
+import scipy
 
 
 def distribution(data, transformed = False):
@@ -23,7 +26,7 @@ def distribution(data, transformed = False):
     """
     
     # Create figure
-    fig = pl.figure(figsize = (11,5));
+    fig = plt.figure(figsize = (11,5));
 
     # Skewed feature plotting
     for i, feature in enumerate(['capital-gain','capital-loss']):
@@ -60,7 +63,7 @@ def evaluate(results, accuracy, f1):
     """
   
     # Create figure
-    fig, ax = pl.subplots(2, 3, figsize = (15,10))
+    fig, ax = plt.subplots(2, 3, figsize = (15,10))
     
     # Constants
     bar_width = 0.3
@@ -110,13 +113,13 @@ def evaluate(results, accuracy, f1):
     patches = []
     for i, learner in enumerate(results.keys()):
         patches.append(mpatches.Patch(color = colors[i], label = learner))
-    pl.legend(handles = patches, bbox_to_anchor = (-.80, 2.53), \
+    plt.legend(handles = patches, bbox_to_anchor = (-.80, 2.53), \
                loc = 'upper center', borderaxespad = 0., ncol = 3, fontsize = 'x-large')
     
     # Aesthetics
-    pl.suptitle("Performance Metrics for Three Supervised Learning Models", fontsize = 10, y = 1.10)
-    pl.tight_layout()
-    pl.show()
+    plt.suptitle("Performance Metrics for Three Supervised Learning Models", fontsize = 10, y = 1.10)
+    plt.tight_layout()
+    plt.show()
     
 
 def feature_plot(importances, X_train, y_train):
@@ -127,17 +130,167 @@ def feature_plot(importances, X_train, y_train):
     values = importances[indices][:5]
 
     # Creat the plot
-    fig = pl.figure(figsize = (9,5))
-    pl.title("Normalized Weights for First Five Most Predictive Features", fontsize = 16)
-    pl.bar(np.arange(5), values, width = 0.6, align="center", color = '#00A000', \
+    fig = plt.figure(figsize = (9,5))
+    plt.title("Normalized Weights for First Five Most Predictive Features", fontsize = 16)
+    plt.bar(np.arange(5), values, width = 0.6, align="center", color = '#00A000', \
           label = "Feature Weight")
-    pl.bar(np.arange(5) - 0.3, np.cumsum(values), width = 0.2, align = "center", color = '#00A0A0', \
+    plt.bar(np.arange(5) - 0.3, np.cumsum(values), width = 0.2, align = "center", color = '#00A0A0', \
           label = "Cumulative Feature Weight")
-    pl.xticks(np.arange(5), columns)
-    pl.xlim((-0.5, 4.5))
-    pl.ylabel("Weight", fontsize = 12)
-    pl.xlabel("Feature", fontsize = 12)
+    plt.xticks(np.arange(5), columns)
+    plt.xlim((-0.5, 4.5))
+    plt.ylabel("Weight", fontsize = 12)
+    plt.xlabel("Feature", fontsize = 12)
     
-    pl.legend(loc = 'upper center')
-    pl.tight_layout()
-    pl.show()  
+    plt.legend(loc = 'upper center')
+    plt.tight_layout()
+    plt.show()  
+
+
+def gen_corr_matrix(df, v_cols, h_cols): 
+    '''
+    Function to generate correlation matrix between selected columns that can be subsequently used to generate a heatmap. 
+    
+    INPUT: 
+        df - dataframe
+        v_cols - list of numerical features to be ploted on the vertical axis of the heat map
+        h_cols - list of numerical features to be ploted on the horizontal axis of the heat map
+    
+    OUTPUT:
+        Returns a dataframe containing the pearson's correlation coefficient for each feature pair in v_cols and h
+    
+    '''
+    # Function to generate heatmap of correlation matrix between selected columns. 
+    # Credit: julianstanley (https://stackoverflow.com/questions/45487145/pandas-correlation-between-list-of-columns-x-whole-dataframe)
+    
+    
+    #Create a new dictionary
+    plotDict = {}
+    # Loop across each of the two lists that contain the items you want to compare
+    for gene1 in v_cols:
+        for gene2 in h_cols:
+            # Do a pearsonR comparison between the two items you want to compare
+            tempDict = {(gene1, gene2): scipy.stats.pearsonr(df[gene1],df[gene2])}
+            # Update the dictionary each time you do a comparison
+            plotDict.update(tempDict)
+    # Unstack the dictionary into a DataFrame
+    dfOutput = pd.Series(plotDict).unstack()
+    # Optional: Take just the pearsonR value out of the output tuple
+    dfOutputPearson = dfOutput.apply(lambda x: x.apply(lambda x:x[0]))
+    return dfOutputPearson
+    
+
+
+def heatmap_full(df_corr, map_title, annot, x, y):
+    '''
+    DESCRIPTION: Function to generate a Full heatmap plot
+    
+    INPUT: 
+        df_corr (pandas dataframe) - a dataframe containing the correlation values
+        map_title (string) - Title of the heatmap plot. Appears on the top of the heatmap plot
+        annot (boolean) - Boolean to indicate if the heatmap should be annotated or not.
+        x (int): width of heatmap in inches
+        y (int): height of heatmap in inches
+    
+    Return:
+        Plots a Full heatmap of the features in df_corr
+    '''
+    fig, ax = plt.subplots(figsize=(x, y))
+    # mask
+    #mask = np.triu(np.ones_like(df_corr, dtype=np.bool))
+    # adjust mask and df
+
+    #mask = mask[1:, :-1]
+    corr = df_corr.copy()
+
+    # color map
+
+    #cmap = sb.diverging_palette(0, 230, 90, 60, as_cmap=True)
+    cmap = 'coolwarm'
+    
+    # plot heatmap
+    sb.heatmap(corr, annot=annot, fmt=".2f", 
+               linewidths=5, cmap=cmap, vmin=-1, vmax=1, 
+               cbar_kws={"shrink": .8}, square=True)
+    
+    
+    #Code to limit what is labelled on the heatmap to above a certain threshold
+    for t in ax.texts:
+        if np.abs(float(t.get_text()))>=0.05:
+            t.set_text(t.get_text()) #if the value is greater than 0.4 then I set the text 
+        else:
+            t.set_text("") # if not it sets an empty text
+
+        
+    ax.set(facecolor = 'white')
+    
+    # ticks
+    yticks = [i.upper() for i in corr.index]
+    xticks = [i.upper() for i in corr.columns]
+    plt.yticks(plt.yticks()[0], labels=yticks, rotation=0)
+    plt.xticks(plt.xticks()[0], labels=xticks)
+
+    # title
+    title = map_title
+    plt.title(title, loc='left', fontsize=20)
+    
+    fig.tight_layout()
+    plt.show()
+
+
+def heatmap_lower_triangle_only(df_corr, map_title, annot, x, y):
+    '''
+    DESCRIPTION: Function to generate a heatmap plot showing only the lower triangle of the heatmap
+    
+    INPUT: 
+        df_corr (pandas dataframe) - a dataframe containing the correlation values
+        map_title (string) - Title of the heatmap plot. Appears on the top of the heatmap plot
+        annot (boolean) - Boolean to indicate if the heatmap should be annotated or not.
+        x (int): width of heatmap in inches
+        y (int): height of heatmap in inches
+    
+    Return:
+        Plots a heatmap of the features in df_corr showing only the lower triangle of the heatmap
+    '''
+        
+    fig, ax = plt.subplots(figsize=(x, y))
+    # mask
+    mask = np.triu(np.ones_like(df_corr, dtype=np.bool))
+    # adjust mask and df
+
+    mask = mask[1:, :-1]
+    corr = df_corr.iloc[1:,:-1].copy()
+
+    #mask = mask[0:, :]
+    #corr = df_corr.iloc[0:,:].copy()
+
+    
+    # color map
+
+    #cmap = sb.diverging_palette(0, 230, 90, 60, as_cmap=True)
+    cmap = 'coolwarm'
+
+    # plot heatmap
+    sb.heatmap(corr, mask=mask, annot=annot, fmt=".2f", 
+               linewidths=5, cmap=cmap, vmin=-1, vmax=1, 
+               cbar_kws={"shrink": .8}, square=True)
+    
+    
+    #Code to limit what is labelled on the heatmap to above a certain threshold
+    for t in ax.texts:
+        if np.abs(float(t.get_text()))>=0.05:
+            t.set_text(t.get_text()) #if the value is greater than 0.4 then I set the text 
+        else:
+            t.set_text("") # if not it sets an empty text
+    ax.set(facecolor = 'white')
+    
+    # ticks
+    yticks = [i.upper() for i in corr.index]
+    xticks = [i.upper() for i in corr.columns]
+    plt.yticks(plt.yticks()[0], labels=yticks, rotation=0)
+    plt.xticks(plt.xticks()[0], labels=xticks)
+
+    # title
+    title = map_title
+    plt.title(title, loc='left', fontsize=20)
+    fig.tight_layout()
+    plt.show()
